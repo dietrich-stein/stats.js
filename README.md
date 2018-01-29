@@ -1,51 +1,31 @@
-stats.js
-========
+# @drecom/stats.js
 
-#### JavaScript Performance Monitor ####
+@drecom/stats.js is a customized [mrdoob/stats.js](https://github.com/mrdoob/stats.js)
 
-This class provides a simple info box that will help you monitor your code performance.
+Combined all the stats.js monitors into one.
+
+![customized.png](https://raw.githubusercontent.com/drecom/stats.js/master/files/customized.png)
 
 * **FPS** Frames rendered in the last second. The higher the number the better.
 * **MS** Milliseconds needed to render a frame. The lower the number the better.
 * **MB** MBytes of allocated memory. (Run Chrome with `--enable-precise-memory-info`)
-* **CUSTOM** User-defined panel support.
-
-
-### Screenshots ###
-
-![fps.png](https://raw.githubusercontent.com/mrdoob/stats.js/master/files/fps.png)
-![ms.png](https://raw.githubusercontent.com/mrdoob/stats.js/master/files/ms.png)
-![mb.png](https://raw.githubusercontent.com/mrdoob/stats.js/master/files/mb.png)
-![custom.png](https://raw.githubusercontent.com/mrdoob/stats.js/master/files/custom.png)
-
 
 ### Usage ###
 
 ```javascript
-var stats = new Stats();
-stats.showPanel( 1 ); // 0: fps, 1: ms, 2: mb, 3+: custom
+var stats = new Stats(60, 100); // FPS:60 MaxJSHeap:100MB
 document.body.appendChild( stats.dom );
 
 function animate() {
 
-	stats.begin();
+    stats.begin();
 
-	// monitored code goes here
+    // monitored code goes here
 
-	stats.end();
+    stats.end();
 
-	requestAnimationFrame( animate );
-
+    requestAnimationFrame( animate );
 }
 
-requestAnimationFrame( animate );
-```
-
-
-### Bookmarklet ###
-
-You can add this code to any page using the following bookmarklet:
-
-```javascript
-javascript:(function(){var script=document.createElement('script');script.onload=function(){var stats=new Stats();document.body.appendChild(stats.dom);requestAnimationFrame(function loop(){stats.update();requestAnimationFrame(loop)});};script.src='//rawgit.com/mrdoob/stats.js/master/build/stats.min.js';document.head.appendChild(script);})()
+animate();
 ```

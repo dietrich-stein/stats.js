@@ -1,35 +1,35 @@
 {
-  "name": "stats.js",
-  "version": "0.17.0",
+  "name": "@drecom/stats.js",
+  "version": "0.2.0",
   "description": "JavaScript Performance Monitor",
   "main": "build/stats.js",
-  "repository": "mrdoob/stats.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drecom/stats.js.git"
+  },
   "directories": {
     "example": "examples"
   },
   "files": [
-    "build",
+    "build/stats.min.js",
     "src"
   ],
   "scripts": {
-    "build": "rollup -c",
-    "build-uglify": "rollup -c && uglifyjs build/stats.js -cm --preamble \"// stats.js - http://github.com/mrdoob/stats.js\" > build/stats.min.js",
-    "build-closure": "rollup -c && java -jar utils/compiler/closure-compiler-v20160713.jar --language_in=ECMASCRIPT5_STRICT --js build/stats.js --js_output_file build/stats.min.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c && uglifyjs build/stats.js -o build/stats.min.js -cm -b beautify=false,preamble='\"// @drecom/stats.js - http://github.com/drecom/stats.js\"'"
   },
   "keywords": [
     "performance",
     "fps",
     "stats"
   ],
-  "author": "mrdoob",
+  "author": "Drecom Co.,Ltd.",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mrdoob/stats.js/issues"
+    "url": "https://github.com/drecom/stats.js/issues"
   },
-  "homepage": "https://github.com/mrdoob/stats.js",
+  "homepage": "https://github.com/drecom/stats.js",
   "devDependencies": {
-    "rollup": "^0.36.0",
-    "uglifyjs": "^2.4.10"
+    "rollup": "0.55.1",
+    "uglify-js": "^3.3.9"
   }
 }

@@ -14,8 +14,7 @@
 		<script src="../build/stats.min.js"></script>
 		<script>
 
-			var stats = new Stats();
-			stats.showPanel( 1 );
+			var stats = new Stats(60, 10);
 			document.body.appendChild( stats.dom );
 
 			var canvas = document.createElement( 'canvas' );
@@ -26,7 +25,9 @@
 			var context = canvas.getContext( '2d' );
 			context.fillStyle = 'rgba(127,0,255,0.05)';
 
-			function animate() {
+			var lastDate = Date.now();
+
+			function animate() { 
 
 				var time = performance.now() / 1000;
 
@@ -42,7 +43,6 @@
 					context.beginPath();
 					context.arc( x, y, 10, 0, Math.PI * 2, true );
 					context.fill();
-
 				}
 
 				stats.end();
