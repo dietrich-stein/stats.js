@@ -13,7 +13,7 @@ Combined all the stats.js monitors into one.
 ### Usage ###
 
 ```javascript
-var stats = new Stats(60, 100); // FPS:60 MaxJSHeap:100MB
+var stats = new Stats({maxFPS:60, maxMem:100}); // Set upper limit of graph
 document.body.appendChild( stats.dom );
 
 function animate() {

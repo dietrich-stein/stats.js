@@ -9,11 +9,16 @@
  * @author Drecom Co.,Ltd. / http://www.drecom.co.jp/
  */
 
-var Stats = function (maxFPS, maxMem, customGraphConf) {
+var Stats = function Stats(_ref) {
+	var _ref$maxFPS = _ref.maxFPS,
+	    maxFPS = _ref$maxFPS === undefined ? 60 : _ref$maxFPS,
+	    _ref$maxMem = _ref.maxMem,
+	    maxMem = _ref$maxMem === undefined ? 100 : _ref$maxMem,
+	    customGraphConf = _ref.customGraphConf,
+	    _ref$drawInterval = _ref.drawInterval,
+	    drawInterval = _ref$drawInterval === undefined ? 1000 : _ref$drawInterval;
 
-	if(maxFPS == undefined) maxFPS = 60;
-	if(maxMem == undefined) maxMem = 100;
-	
+
 	// Determine whether JavaScript heap can be obtained.
 	var canReadMem = false;
 	if (self.performance && self.performance.memory && self.performance.memory.usedJSHeapSize != self.performance.memory.usedJSHeapSize) {
@@ -21,65 +26,74 @@ var Stats = function (maxFPS, maxMem, customGraphConf) {
 	}
 
 	var margedCustomGraphConf = [];
-	if(canReadMem){
+	if (canReadMem) {
 		margedCustomGraphConf.push({
 			color: '#fa0',
-			max: maxMem,
+			max: maxMem
 		});
 	}
 
-	if(customGraphConf && customGraphConf instanceof Array){
+	if (customGraphConf && customGraphConf instanceof Array) {
 		margedCustomGraphConf = margedCustomGraphConf.concat(customGraphConf);
 	}
 
-	var panel = new FpsPanel( maxFPS, margedCustomGraphConf );
+	var panel = new FpsPanel(maxFPS, margedCustomGraphConf);
 
-	var beginTime = ( performance || Date ).now(), prevTime = beginTime, frames = 0, mem = 0, maxTime = 0;
+	var beginTime = (performance || Date).now(),
+	    prevTime = beginTime,
+	    frames = 0,
+	    mem = 0,
+	    maxTime = 0;
 
 	var customText = "";
 
 	return {
 		dom: panel.dom,
-		getFps: function() { return panel.getFps() },
-		getMs: function() { return panel.getMs() },
-		getMem: function() { return mem },
+		getFps: function getFps() {
+			return panel.getFps();
+		},
+		getMs: function getMs() {
+			return panel.getMs();
+		},
+		getMem: function getMem() {
+			return mem;
+		},
 
-		setText: function (text) {
+		setText: function setText(text) {
 			customText = text;
 		},
 
-		begin: function () {
+		begin: function begin() {
 
-			beginTime = ( performance || Date ).now();
-
+			beginTime = (performance || Date).now();
 		},
 
-		end: function (customGraphValue) {
+		end: function end(customGraphValue) {
 
-			frames ++;
+			frames++;
 
-			var time = ( performance || Date ).now();
+			var time = (performance || Date).now();
 
 			var nowTime = time - beginTime;
-			if(maxTime < nowTime){
+			if (maxTime < nowTime) {
 				maxTime = nowTime;
 			}
 
-			if ( time >= prevTime + 1000 ) {
+			if (time >= prevTime + drawInterval) {
 
 				var margedCustomGraphValue = [];
 				var text = customText;
 
-				if(canReadMem){
+				if (canReadMem) {
 					mem = window.performance.memory.usedJSHeapSize / 1048576;
 					margedCustomGraphValue.push(mem);
 					text = Math.round(mem) + ' MB  ' + customText;
 				}
-				if(customGraphValue && customGraphValue instanceof Array){
+				if (customGraphValue && customGraphValue instanceof Array) {
 					margedCustomGraphValue = margedCustomGraphValue.concat(customGraphValue);
 				}
 
-				panel.update( ( frames * 1000 ) / ( time - prevTime ), maxTime, margedCustomGraphValue, text );
+				panel.update(frames * 1000 / (time - prevTime), maxTime, margedCustomGraphValue, text);
 
 				prevTime = time;
 				frames = 0;
@@ -87,40 +101,41 @@ var Stats = function (maxFPS, maxMem, customGraphConf) {
 			}
 
 			return time;
-
 		},
 
-		update: function (customGraphValue) {
+		update: function update(customGraphValue) {
 
 			beginTime = this.end(customGraphValue);
-
-		},
+		}
 	};
-
 };
 
 // A class that displays passed data in a graph.
-var FpsPanel = function (maxFPS, customGraphConf) {
+var FpsPanel = function FpsPanel(maxFPS, customGraphConf) {
 
 	var MAX_FPS = maxFPS,
-			MAX_MS = 1000 / MAX_FPS,
-			ALERT_MS = 1000 / MAX_FPS * 0.6;
+	    MAX_MS = 1000 / MAX_FPS,
+	    ALERT_MS = 1000 / MAX_FPS * 0.6;
 
-	var PR = Math.round( window.devicePixelRatio || 1 ) * 2;
-	var WIDTH = 80 * PR, HEIGHT = 48 * PR,
-			TEXT_X = 3 * PR, TEXT_Y = 2 * PR,
-			GRAPH_X = 3 * PR, GRAPH_Y = 25 * PR,
-			GRAPH_WIDTH = 74 * PR, GRAPH_HEIGHT = 20 * PR;
+	var PR = Math.round(window.devicePixelRatio || 1) * 2;
+	var WIDTH = 80 * PR,
+	    HEIGHT = 48 * PR,
+	    TEXT_X = 3 * PR,
+	    TEXT_Y = 2 * PR,
+	    GRAPH_X = 3 * PR,
+	    GRAPH_Y = 25 * PR,
+	    GRAPH_WIDTH = 74 * PR,
+	    GRAPH_HEIGHT = 20 * PR;
 	var CUSTOM_TEXT_Y = GRAPH_Y / 2;
 
 	var FRAME_COLOR = '#002',
-			GRAPH_COLOR = '#124',
-			FPS_COLOR = '#a15',
-			MS_COLOR = '#0ff',
-			NORMAL_TEXT_COLOR = '#0ff',
-			ALERT_TEXT_COLOR = '#f08',
-			CUSTOM_TEXT_COLOR = '#fa0';
-	
+	    GRAPH_COLOR = '#124',
+	    FPS_COLOR = '#a15',
+	    MS_COLOR = '#0ff',
+	    NORMAL_TEXT_COLOR = '#0ff',
+	    ALERT_TEXT_COLOR = '#f08',
+	    CUSTOM_TEXT_COLOR = '#fa0';
+
 	var lastFps = 0;
 
 	var lastMs = 0;
@@ -128,42 +143,42 @@ var FpsPanel = function (maxFPS, customGraphConf) {
 
 	var customGraphLength = 0;
 	var customGraphLastY = [];
-	if(customGraphConf && customGraphConf instanceof Array){
+	if (customGraphConf && customGraphConf instanceof Array) {
 		customGraphLength = customGraphConf.length;
 		for (var i = 0; i < customGraphLength; i++) {
 			customGraphLastY.push(GRAPH_HEIGHT);
 		}
 	}
 
-	var container = document.createElement( 'div' );
+	var container = document.createElement('div');
 	container.style.cssText = 'position:fixed;top:0;left:0;opacity:0.9;z-index:10000';
-	var canvas = document.createElement( 'canvas' );
+	var canvas = document.createElement('canvas');
 	canvas.width = WIDTH;
 	canvas.height = HEIGHT;
-	container.appendChild( canvas );
+	container.appendChild(canvas);
 	canvas.style.cssText = 'width:80px;height:48px';
-	var context = canvas.getContext( '2d' );
-	context.font = 'bold ' + ( 9 * PR ) + 'px Helvetica,Arial,sans-serif';
+	var context = canvas.getContext('2d');
+	context.font = 'bold ' + 9 * PR + 'px Helvetica,Arial,sans-serif';
 	context.textBaseline = 'top';
-	
-	context.fillStyle = FRAME_COLOR;
-	context.fillRect( 0, 0, WIDTH, HEIGHT );
-	context.fillStyle = GRAPH_COLOR;
-	context.fillRect( GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT );
 
-	var drawLineGraph = function (color, maxValue, newValue, lastY) {
+	context.fillStyle = FRAME_COLOR;
+	context.fillRect(0, 0, WIDTH, HEIGHT);
+	context.fillStyle = GRAPH_COLOR;
+	context.fillRect(GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT);
+
+	var drawLineGraph = function drawLineGraph(color, maxValue, newValue, lastY) {
 		context.fillStyle = color;
-		var newY = Math.round( ( 1 - ( newValue / maxValue ) ) * GRAPH_HEIGHT);
-		if(GRAPH_HEIGHT - PR < newY) {
+		var newY = Math.round((1 - newValue / maxValue) * GRAPH_HEIGHT);
+		if (GRAPH_HEIGHT - PR < newY) {
 			newY = GRAPH_HEIGHT - PR;
-		}else if(newY < 0){
+		} else if (newY < 0) {
 			newY = 0;
 		}
 		var head = Math.min(newY, lastY);
 		var bottom = Math.max(newY, lastY);
 		var height = bottom - head;
 		if (height < PR) height = PR;
-		context.fillRect( GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y + head, PR, height );
+		context.fillRect(GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y + head, PR, height);
 		return newY;
 	};
 
@@ -171,41 +186,45 @@ var FpsPanel = function (maxFPS, customGraphConf) {
 
 		dom: container,
 
-		getFps: function() { return lastFps },
-		getMs: function() { return lastMs },
-		
-		update: function ( fps, ms, customGraphValue, customText ) {
+		getFps: function getFps() {
+			return lastFps;
+		},
+		getMs: function getMs() {
+			return lastMs;
+		},
+
+		update: function update(fps, ms, customGraphValue, customText) {
 			lastFps = fps;
 			lastMs = ms;
 
 			context.fillStyle = FRAME_COLOR;
-			context.fillRect( 0, 0, WIDTH, GRAPH_Y );
+			context.fillRect(0, 0, WIDTH, GRAPH_Y);
 
-			if(ALERT_MS <= lastMs){
+			if (ALERT_MS <= lastMs) {
 				context.fillStyle = ALERT_TEXT_COLOR;
-			}else{
+			} else {
 				context.fillStyle = NORMAL_TEXT_COLOR;
 			}
-			context.fillText( Math.round(lastFps) + ' FPS  -  ' + Math.round(lastMs) + ' MS', TEXT_X, TEXT_Y );
+			context.fillText(Math.round(lastFps) + ' FPS  -  ' + Math.round(lastMs) + ' MS', TEXT_X, TEXT_Y);
 
-			if(customText){
+			if (customText) {
 				context.fillStyle = CUSTOM_TEXT_COLOR;
-				context.fillText( customText, TEXT_X, CUSTOM_TEXT_Y );
+				context.fillText(customText, TEXT_X, CUSTOM_TEXT_Y);
 			}
-			
-			context.drawImage( canvas, GRAPH_X + PR, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT, GRAPH_X, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT );
+
+			context.drawImage(canvas, GRAPH_X + PR, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT, GRAPH_X, GRAPH_Y, GRAPH_WIDTH - PR, GRAPH_HEIGHT);
 
 			context.fillStyle = GRAPH_COLOR;
-			context.fillRect( GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, GRAPH_HEIGHT );
+			context.fillRect(GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, GRAPH_HEIGHT);
 
 			context.fillStyle = FPS_COLOR;
-			var nowFpsY = Math.round( ( 1 - ( lastFps / MAX_FPS ) ) * GRAPH_HEIGHT );
-			if(nowFpsY < 0) nowFpsY = 0;
-			context.fillRect( GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y + nowFpsY, PR, GRAPH_HEIGHT - nowFpsY);
+			var nowFpsY = Math.round((1 - lastFps / MAX_FPS) * GRAPH_HEIGHT);
+			if (nowFpsY < 0) nowFpsY = 0;
+			context.fillRect(GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y + nowFpsY, PR, GRAPH_HEIGHT - nowFpsY);
 
 			lastMsY = drawLineGraph(MS_COLOR, MAX_MS, lastMs, lastMsY);
 
-			if(customGraphLength){
+			if (customGraphLength) {
 				for (var i = 0; i < customGraphLength; i++) {
 					customGraphLastY[i] = drawLineGraph(customGraphConf[i].color, customGraphConf[i].max, customGraphValue[i], customGraphLastY[i]);
 				}

@@ -14,7 +14,7 @@
 		<script src="../build/stats.min.js"></script>
 		<script>
 
-			var stats = new Stats(60, 10);
+			var stats = new Stats({maxFPS:60, maxMem:10});
 			document.body.appendChild( stats.dom );
 
 			var canvas = document.createElement( 'canvas' );

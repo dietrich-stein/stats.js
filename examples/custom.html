@@ -20,7 +20,7 @@
 					max: 500,
 				},
 			];
-			var stats = new Stats(60, 100, customGraph);
+			var stats = new Stats({maxFPS:60, maxMem:100, customGraphConf:customGraph, drawInterval:100});
 			document.body.appendChild( stats.dom );
 
 			var canvas = document.createElement( 'canvas' );
@@ -51,7 +51,7 @@
 					context.fill();
 				}
 
-				stats.setText('X=' + x);
+				stats.setText('foobar');
 				stats.end([x]);
 
 				requestAnimationFrame( animate );

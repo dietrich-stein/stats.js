@@ -3,11 +3,8 @@
  * @author Drecom Co.,Ltd. / http://www.drecom.co.jp/
  */
 
-var Stats = function (maxFPS, maxMem, customGraphConf) {
+var Stats = function ({maxFPS = 60, maxMem = 100, customGraphConf, drawInterval = 1000 }) {
 
-	if(maxFPS == undefined) maxFPS = 60;
-	if(maxMem == undefined) maxMem = 100;
-	
 	// Determine whether JavaScript heap can be obtained.
 	var canReadMem = false;
 	if (self.performance && self.performance.memory && self.performance.memory.usedJSHeapSize != self.performance.memory.usedJSHeapSize) {
@@ -59,7 +56,7 @@ var Stats = function (maxFPS, maxMem, customGraphConf) {
 				maxTime = nowTime;
 			}
 
-			if ( time >= prevTime + 1000 ) {
+			if ( time >= prevTime + drawInterval ) {
 
 				var margedCustomGraphValue = [];
 				var text = customText;
