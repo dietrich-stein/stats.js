@@ -3,6 +3,7 @@
   "version": "0.2.0",
   "description": "JavaScript Performance Monitor",
   "main": "build/stats.js",
+  "types": "src/index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/drecom/stats.js.git"
@@ -11,7 +12,7 @@
     "example": "examples"
   },
   "files": [
-    "build/stats.min.js",
+    "build",
     "src"
   ],
   "scripts": {
