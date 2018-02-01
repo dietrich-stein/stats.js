@@ -3,7 +3,12 @@
  * @author Drecom Co.,Ltd. / http://www.drecom.co.jp/
  */
 
-var Stats = function ({maxFPS = 60, maxMem = 100, customGraphConf, drawInterval = 1000 }) {
+var Stats = function (config) {
+
+	const maxFPS = (config && config.maxFPS) ? config.maxFPS : 60;
+	const maxMem = (config && config.maxMem) ? config.maxMem : 100;
+	const customGraphConf = (config && config.customGraphConf) ? config.customGraphConf : undefined;
+	const drawInterval = (config && config.drawInterval) ? config.drawInterval : 1000;
 
 	// Determine whether JavaScript heap can be obtained.
 	var canReadMem = false;

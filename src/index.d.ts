@@ -1,5 +1,5 @@
 declare class Stats {
-	constructor(config : {
+	constructor(config? : {
 		maxFPS? : number,
 		maxMem? : number,
 		customGraphConf? : {color : string, max: number}[],
@@ -14,8 +14,8 @@ declare class Stats {
 	setText(text: string) : void;
 
 	begin(): void;
-	end(customGraphValue: number[] | null): number;
-	update(customGraphValue: number[] | null): void;
+	end(customGraphValue?: number[]): number;
+	update(customGraphValue?: number[]): void;
 }
 
 declare module '@drecom/stats.js' {

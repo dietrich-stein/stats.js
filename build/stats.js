@@ -9,15 +9,12 @@
  * @author Drecom Co.,Ltd. / http://www.drecom.co.jp/
  */
 
-var Stats = function Stats(_ref) {
-	var _ref$maxFPS = _ref.maxFPS,
-	    maxFPS = _ref$maxFPS === undefined ? 60 : _ref$maxFPS,
-	    _ref$maxMem = _ref.maxMem,
-	    maxMem = _ref$maxMem === undefined ? 100 : _ref$maxMem,
-	    customGraphConf = _ref.customGraphConf,
-	    _ref$drawInterval = _ref.drawInterval,
-	    drawInterval = _ref$drawInterval === undefined ? 1000 : _ref$drawInterval;
+var Stats = function Stats(config) {
 
+	var maxFPS = config && config.maxFPS ? config.maxFPS : 60;
+	var maxMem = config && config.maxMem ? config.maxMem : 100;
+	var customGraphConf = config && config.customGraphConf ? config.customGraphConf : undefined;
+	var drawInterval = config && config.drawInterval ? config.drawInterval : 1000;
 
 	// Determine whether JavaScript heap can be obtained.
 	var canReadMem = false;
