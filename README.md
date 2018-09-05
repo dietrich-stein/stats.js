@@ -16,7 +16,7 @@
 
 * **FPS** Frames rendered in the last second. The higher the number the better.
 * **MS** Maximum number of milliseconds between graph drawing. The lower the number the better.
-* **MB** MBytes of allocated memory. (Run Chrome with `--enable-precise-memory-info`)
+* **MB** MBytes of allocated js memory. (Enabled by default in Chrome for desktop 69 and later)
 
 ### Usage ###
 

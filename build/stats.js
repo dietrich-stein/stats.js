@@ -17,24 +17,16 @@ var Stats = function Stats(config) {
 	var drawInterval = config && config.drawInterval ? config.drawInterval : 1000;
 
 	// Determine whether JavaScript heap can be obtained.
+	var isReadMemTest = false;
+	var isReadMemTestMem = 0;
+	var isReadMemTestTime = (performance || Date).now() + 5000;
 	var canReadMem = false;
-	if (self.performance && self.performance.memory && self.performance.memory.usedJSHeapSize != self.performance.memory.usedJSHeapSize) {
-		canReadMem = true;
+	if (self.performance && self.performance.memory && self.performance.memory.usedJSHeapSize) {
+		isReadMemTest = true;
+		isReadMemTestMem = self.performance.memory.usedJSHeapSize;
 	}
 
-	var margedCustomGraphConf = [];
-	if (canReadMem) {
-		margedCustomGraphConf.push({
-			color: '#fa0',
-			max: maxMem
-		});
-	}
-
-	if (customGraphConf && customGraphConf instanceof Array) {
-		margedCustomGraphConf = margedCustomGraphConf.concat(customGraphConf);
-	}
-
-	var panel = new FpsPanel(maxFPS, margedCustomGraphConf);
+	var panel = new FpsPanel(maxFPS, customGraphConf);
 
 	var beginTime = (performance || Date).now(),
 	    prevTime = beginTime,
@@ -78,19 +70,34 @@ var Stats = function Stats(config) {
 
 			if (time >= prevTime + drawInterval) {
 
-				var margedCustomGraphValue = [];
 				var text = customText;
 
-				if (canReadMem) {
-					mem = window.performance.memory.usedJSHeapSize / 1048576;
-					margedCustomGraphValue.push(mem);
-					text = Math.round(mem) + ' MB  ' + customText;
-				}
-				if (customGraphValue && customGraphValue instanceof Array) {
-					margedCustomGraphValue = margedCustomGraphValue.concat(customGraphValue);
+				if (isReadMemTest) {
+					// Enable if there are heap fluctuations
+					if (isReadMemTestMem !== performance.memory.usedJSHeapSize) {
+						isReadMemTest = false;
+						panel.addCustomGraph({
+							color: '#fa0',
+							max: maxMem
+						});
+						canReadMem = true;
+					} else {
+						if (isReadMemTestTime < time) {
+							isReadMemTest = false;
+						}
+					}
 				}
 
-				panel.update(frames * 1000 / (time - prevTime), maxTime, margedCustomGraphValue, text);
+				if (canReadMem) {
+					if (!customGraphValue) {
+						customGraphValue = [];
+					}
+					mem = window.performance.memory.usedJSHeapSize / 1048576;
+					customGraphValue.push(mem);
+					text = Math.round(mem) + ' MB  ' + customText;
+				}
+
+				panel.update(frames * 1000 / (time - prevTime), maxTime, customGraphValue, text);
 
 				prevTime = time;
 				frames = 0;
@@ -140,11 +147,12 @@ var FpsPanel = function FpsPanel(maxFPS, customGraphConf) {
 
 	var customGraphLength = 0;
 	var customGraphLastY = [];
-	if (customGraphConf && customGraphConf instanceof Array) {
-		customGraphLength = customGraphConf.length;
-		for (var i = 0; i < customGraphLength; i++) {
-			customGraphLastY.push(GRAPH_HEIGHT);
-		}
+	if (!customGraphConf) {
+		customGraphConf = [];
+	}
+	customGraphLength = customGraphConf.length;
+	for (var i = 0; i < customGraphLength; i++) {
+		customGraphLastY.push(GRAPH_HEIGHT);
 	}
 
 	var container = document.createElement('div');
@@ -188,6 +196,12 @@ var FpsPanel = function FpsPanel(maxFPS, customGraphConf) {
 		},
 		getMs: function getMs() {
 			return lastMs;
+		},
+
+		addCustomGraph: function addCustomGraph(graphProps) {
+			customGraphConf.push(graphProps);
+			customGraphLastY.push(GRAPH_HEIGHT);
+			customGraphLength++;
 		},
 
 		update: function update(fps, ms, customGraphValue, customText) {
