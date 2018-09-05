@@ -1,6 +1,6 @@
 {
   "name": "@drecom/stats.js",
-  "version": "0.2.2",
+  "version": "1.0.0",
   "description": "JavaScript Performance Monitor",
   "main": "build/stats.js",
   "types": "src/index.d.ts",
