@@ -73,7 +73,6 @@ var Stats = function Stats(config) {
 				var text = customText;
 
 				if (isReadMemTest) {
-					console.log("TEST");
 					// Enable if there are heap fluctuations
 					if (isReadMemTestMem !== performance.memory.usedJSHeapSize) {
 						isReadMemTest = false;
