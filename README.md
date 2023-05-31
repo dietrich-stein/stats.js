@@ -38,11 +38,11 @@ All settings are optional. The defaults are shown below.
 
 ```javascript
 var stats = new Stats({
-  maxFps: 60, // Sets upper limit of FPS graph
-  maxMb: 100 // Sets upper limit of MB graph
+  maxFps: 60,
+  maxMb: 100,
   drawInterval: 1000,
-  containerStyle: '', // Inline styles for container
-  canvasStyle: '', // Inline styles for the canvas
+  containerStyle: 'position:fixed;top:0;left:0;opacity:0.9;z-index:10000',
+  canvasStyle: 'width:160px;height:96px',
   showFps: true,
   showMs: true,
   showMb: true,
@@ -54,15 +54,15 @@ var stats = new Stats({
   msTextColor: '#00ffff',
   mbColor: '#ff00ff',
   mbTextColor: '#ff00ff'
-}); 
-document.body.appendChild( stats.dom );
+});
+
+document.body.appendChild(stats.dom);
 
 function animate() {
     stats.begin();
     // monitored code goes here
     stats.end();
-
-    requestAnimationFrame( animate );
+    requestAnimationFrame(animate);
 }
 
 animate();

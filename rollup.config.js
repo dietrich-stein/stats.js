@@ -1,11 +1,10 @@
 import { babel } from '@rollup/plugin-babel';
 
 const config = {
-  input: 'src/Stats.js', //  entry: 'src/Stats.js',
+  input: 'src/Stats.js',
   output: {
     file: 'build/stats.js',
-    //dir: 'output',
-    format: 'umd', //'es', // umd
+    format: 'umd',
     name: 'Stats',
   },
   plugins: [

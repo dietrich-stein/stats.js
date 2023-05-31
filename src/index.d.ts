@@ -24,8 +24,8 @@ declare class Stats {
   getMs(): number;
   getMb(): number;
   begin(): void;
-  end(customGraphValue?: number[]): number;
-  update(customGraphValue?: number[]): void;
+  end(): number;
+  update(): void;
 }
 
 declare module '@dietrich-stein/stats.js' {
