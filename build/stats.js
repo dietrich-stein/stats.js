@@ -32,7 +32,7 @@ var Stats = function Stats(config) {
 		isReadMemTestMem = self.performance.memory.usedJSHeapSize;
 	}
 
-	var panel = new FpsPanel(maxFPS, customGraphConf);
+	var panel = new FpsPanel(maxFPS, customGraphConf, containerStyle, canvasStyle);
 
 	var beginTime = (performance || Date).now(),
 	    prevTime = beginTime,
@@ -121,7 +121,7 @@ var Stats = function Stats(config) {
 };
 
 // A class that displays passed data in a graph.
-var FpsPanel = function FpsPanel(maxFPS, customGraphConf) {
+var FpsPanel = function FpsPanel(maxFPS, customGraphConf, containerStyle, canvasStyle) {
 
 	var MAX_FPS = maxFPS,
 	    MAX_MS = 1000 / MAX_FPS,
@@ -210,19 +210,28 @@ var FpsPanel = function FpsPanel(maxFPS, customGraphConf) {
 			customGraphLength++;
 		},
 
-		update: function update(fps, ms, customGraphValue, customText) {
+		update: function update(fps, ms, customGraphValue, customText, showFPS, showMS, showMB) {
 			lastFps = fps;
-			lastMs = ms;
 
 			context.fillStyle = FRAME_COLOR;
 			context.fillRect(0, 0, WIDTH, GRAPH_Y);
 
-			if (ALERT_MS <= lastMs) {
-				context.fillStyle = ALERT_TEXT_COLOR;
-			} else {
-				context.fillStyle = NORMAL_TEXT_COLOR;
+			context.fillStyle = NORMAL_TEXT_COLOR;
+			var lineText = '';
+			if (showFPS) {
+				lineText = Math.round(lastFps) + ' FPS';
 			}
-			context.fillText(Math.round(lastFps) + ' FPS  -  ' + Math.round(lastMs) + ' MS', TEXT_X, TEXT_Y);
+			if (showMS) {
+				lastMs = ms;
+				if (ALERT_MS <= lastMs) {
+					context.fillStyle = ALERT_TEXT_COLOR;
+				}
+				lineText = lineText.length > 0 ? '  -  ' : lineText;
+				lineText += Math.round(lastMs) + ' MS';
+			}
+			if (showFPS || showMS) {
+				context.fillText(Math.round(lastFps) + ' FPS  -  ' + Math.round(lastMs) + ' MS', TEXT_X, TEXT_Y);
+			}
 
 			if (customText) {
 				context.fillStyle = CUSTOM_TEXT_COLOR;
