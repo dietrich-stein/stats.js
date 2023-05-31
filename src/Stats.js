@@ -235,5 +235,5 @@ var Stats = function (config) {
 	};
   };
   
-  export default Stats;
+  export { Stats as default };
   
