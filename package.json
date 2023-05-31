@@ -1,12 +1,12 @@
 {
-  "name": "@drecom/stats.js",
+  "name": "@dietrich-stein/stats.js",
   "version": "1.0.0",
   "description": "JavaScript Performance Monitor",
   "main": "build/stats.js",
   "types": "src/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/drecom/stats.js.git"
+    "url": "git+https://github.com/dietrich-stein/stats.js.git"
   },
   "directories": {
     "example": "examples"
@@ -23,7 +23,7 @@
     "fps",
     "stats"
   ],
-  "author": "Drecom Co.,Ltd.",
+  "author": "",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/drecom/stats.js/issues"

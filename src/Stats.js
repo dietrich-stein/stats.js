@@ -1,6 +1,7 @@
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author Drecom Co.,Ltd. / http://www.drecom.co.jp/
+ * @author Dietrich Stein / https://github.com/dietrich-stein/stats.js
  */
 
 var Stats = function (config) {
@@ -9,6 +10,15 @@ var Stats = function (config) {
 	const maxMem = (config && config.maxMem) ? config.maxMem : 100;
 	const customGraphConf = (config && config.customGraphConf) ? config.customGraphConf : undefined;
 	const drawInterval = (config && config.drawInterval) ? config.drawInterval : 1000;
+	const containerStyle = (config && config.containerStyle) 
+		? config.containerStyle 
+		: 'position:fixed;top:0;left:0;opacity:0.9;z-index:10000';
+	const canvasStyle = (config && config.canvasStyle) 
+		? config.canvasStyle 
+		: 'width:80px;height:48px';
+	const showFPS = (config && config.maxFPS) ? config.maxFPS : true;
+	const showMS = (config && config.showMS) ? config.showMS : false;
+	const showMB = (config && config.showMB) ? config.showMB : false;
 
 	// Determine whether JavaScript heap can be obtained.
 	var isReadMemTest = false;
@@ -116,13 +126,13 @@ var FpsPanel = function (maxFPS, customGraphConf) {
 			GRAPH_WIDTH = 74 * PR, GRAPH_HEIGHT = 20 * PR;
 	var CUSTOM_TEXT_Y = GRAPH_Y / 2;
 
-	var FRAME_COLOR = '#002',
-			GRAPH_COLOR = '#124',
-			FPS_COLOR = '#a15',
-			MS_COLOR = '#0ff',
-			NORMAL_TEXT_COLOR = '#0ff',
-			ALERT_TEXT_COLOR = '#f08',
-			CUSTOM_TEXT_COLOR = '#fa0';
+	var FRAME_COLOR = '#000022',
+			GRAPH_COLOR = '#112244',
+			FPS_COLOR = '#aa1155',
+			MS_COLOR = '#00ffff',
+			NORMAL_TEXT_COLOR = '#00ffff',
+			ALERT_TEXT_COLOR = '#ff0088',
+			CUSTOM_TEXT_COLOR = '#ffaa00';
 	
 	var lastFps = 0;
 
@@ -140,12 +150,12 @@ var FpsPanel = function (maxFPS, customGraphConf) {
 	}
 
 	var container = document.createElement( 'div' );
-	container.style.cssText = 'position:fixed;top:0;left:0;opacity:0.9;z-index:10000';
+	container.style.cssText = containerStyle;
 	var canvas = document.createElement( 'canvas' );
 	canvas.width = WIDTH;
 	canvas.height = HEIGHT;
 	container.appendChild( canvas );
-	canvas.style.cssText = 'width:80px;height:48px';
+	canvas.style.cssText = canvasStyle;
 	var context = canvas.getContext( '2d' );
 	context.font = 'bold ' + ( 9 * PR ) + 'px Helvetica,Arial,sans-serif';
 	context.textBaseline = 'top';
@@ -208,12 +218,16 @@ var FpsPanel = function (maxFPS, customGraphConf) {
 			context.fillStyle = GRAPH_COLOR;
 			context.fillRect( GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, GRAPH_HEIGHT );
 
-			context.fillStyle = FPS_COLOR;
-			var nowFpsY = Math.round( ( 1 - ( lastFps / MAX_FPS ) ) * GRAPH_HEIGHT );
-			if(nowFpsY < 0) nowFpsY = 0;
-			context.fillRect( GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y + nowFpsY, PR, GRAPH_HEIGHT - nowFpsY);
+			if (showFPS) {
+				context.fillStyle = FPS_COLOR;
+				var nowFpsY = Math.round( ( 1 - ( lastFps / MAX_FPS ) ) * GRAPH_HEIGHT );
+				if(nowFpsY < 0) nowFpsY = 0;
+				context.fillRect( GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y + nowFpsY, PR, GRAPH_HEIGHT - nowFpsY);
+			}
 
-			lastMsY = drawLineGraph(MS_COLOR, MAX_MS, lastMs, lastMsY);
+			if (showMS) {
+				lastMsY = drawLineGraph(MS_COLOR, MAX_MS, lastMs, lastMsY);
+			}
 
 			if(customGraphLength){
 				for (var i = 0; i < customGraphLength; i++) {
