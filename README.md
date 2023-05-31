@@ -1,4 +1,4 @@
-# @dietrich-stein/stats.js
+# stats.js
 
 <!--
 [![npm](https://img.shields.io/npm/v/@drecom/stats.js.svg)](https://www.npmjs.com/package/@drecom/stats.js)
@@ -7,7 +7,7 @@
 
 This repo is a customized fork of [drecom/stats.js](https://github.com/drecom/stats.js).
 
-The parent of this repo is a customized fork of [mrdoob/stats.js](https://github.com/mrdoob/stats.js)
+The parent of this repo is a customized fork of [mrdoob/stats.js](https://github.com/mrdoob/stats.js).
 
 ## What changed in this fork?
 

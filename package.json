@@ -17,7 +17,7 @@
     "src"
   ],
   "scripts": {
-    "build": "rollup -c && uglifyjs build/stats.js -o build/stats.min.js -cm -b beautify=false,preamble='\"// @drecom/stats.js - http://github.com/drecom/stats.js\"'"
+    "build": "rollup -c && uglifyjs build/stats.js -o build/stats.min.js -cm -b beautify=false,preamble='\"// @dietrich-stein/stats.js - http://github.com/dietrich-stein/stats.js\"'"
   },
   "keywords": [
     "performance",
@@ -27,9 +27,9 @@
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/drecom/stats.js/issues"
+    "url": "https://github.com/dietrich-stein/stats.js/issues"
   },
-  "homepage": "https://github.com/drecom/stats.js",
+  "homepage": "https://github.com/dietrich-stein/stats.js",
   "devDependencies": {
     "@babel/cli": "^7.21.5",
     "@babel/core": "^7.22.1",
