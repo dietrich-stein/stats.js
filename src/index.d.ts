@@ -3,7 +3,12 @@ declare class Stats {
 		maxFPS? : number,
 		maxMem? : number,
 		customGraphConf? : {color : string, max: number}[],
-		drawInterval? : number
+		drawInterval? : number,
+		containerStyle? : string,
+		canvasStyle? : string
+		showFPS? : boolean,
+		showMS? : boolean,
+		showMB? : boolean
 	});
 	
 	dom: HTMLDivElement;
