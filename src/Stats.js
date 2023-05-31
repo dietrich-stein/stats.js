@@ -67,32 +67,34 @@ var Stats = function (config) {
 
 				var text = customText;
 
-				if (isReadMemTest) {
-					// Enable if there are heap fluctuations
-					if (isReadMemTestMem !==  performance.memory.usedJSHeapSize) {
-						isReadMemTest = false;
-						panel.addCustomGraph({
-							color: '#fa0',
-							max: maxMem,
-						});
-						canReadMem = true;
-					} else {
-						if (isReadMemTestTime < time) {
+				if (showMB) {
+					if (isReadMemTest) {
+						// Enable if there are heap fluctuations
+						if (isReadMemTestMem !==  performance.memory.usedJSHeapSize) {
 							isReadMemTest = false;
+							panel.addCustomGraph({
+								color: '#fa0',
+								max: maxMem,
+							});
+							canReadMem = true;
+						} else {
+							if (isReadMemTestTime < time) {
+								isReadMemTest = false;
+							}
 						}
 					}
-				}
 
-				if(canReadMem){
-					if (!customGraphValue) {
-						customGraphValue = [];
+					if(canReadMem){
+						if (!customGraphValue) {
+							customGraphValue = [];
+						}
+						mem = window.performance.memory.usedJSHeapSize / 1048576;
+						customGraphValue.push(mem);
+						text = Math.round(mem) + ' MB  ' + customText;
 					}
-					mem = window.performance.memory.usedJSHeapSize / 1048576;
-					customGraphValue.push(mem);
-					text = Math.round(mem) + ' MB  ' + customText;
 				}
 
-				panel.update( ( frames * 1000 ) / ( time - prevTime ), maxTime, customGraphValue, text );
+				panel.update( ( frames * 1000 ) / ( time - prevTime ), maxTime, customGraphValue, text, showFPS, showMS, showMB );
 
 				prevTime = time;
 				frames = 0;
