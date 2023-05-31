@@ -1,8 +1,15 @@
 {
   "presets": [
-    ["env", {
-      "modules": false
-    }]
+    [
+      "@babel/preset-env", 
+      {
+        //"modules": false,
+        //"useBuiltIns": "entry",
+        //"corejs": "3.22"        
+      }
+    ]
   ],
-  "plugins": ["external-helpers"]
+  "plugins": [
+    //"external-helpers"
+  ]
 }

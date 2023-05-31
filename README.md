@@ -1,11 +1,25 @@
-# @drecom/stats.js
+# @dietrich-stein/stats.js
 
+<!--
 [![npm](https://img.shields.io/npm/v/@drecom/stats.js.svg)](https://www.npmjs.com/package/@drecom/stats.js)
 [![license](https://img.shields.io/github/license/drecom/stats.js.svg)](LICENSE)
+-->
 
-@drecom/stats.js is a customized [mrdoob/stats.js](https://github.com/mrdoob/stats.js)
+This repo is a customized fork of [drecom/stats.js](https://github.com/drecom/stats.js).
 
-## What changed?
+The parent of this repo is a customized fork of [mrdoob/stats.js](https://github.com/mrdoob/stats.js)
+
+## What changed in this fork?
+
+- Updated Babel and rollup
+- Using an object for configuration
+- Added color options
+- Changed to line style for FPS graph
+- Modified the default graph colors
+- Removed alert coloring
+- Removed custom graphs
+
+## What changed in the parent fork?
 
  - Combined all the stats.js monitors into one.
  - Added getters of various parameters.
@@ -18,18 +32,34 @@
 * **MS** Maximum number of milliseconds between graph drawing. The lower the number the better.
 * **MB** MBytes of allocated js memory. (Enabled by default in Chrome for desktop 69 and later)
 
-### Usage ###
+## Usage
+
+All settings are optional. The defaults are shown below.
 
 ```javascript
-var stats = new Stats({maxFPS:60, maxMem:100}); // Set upper limit of graph
+var stats = new Stats({
+  maxFps: 60, // Sets upper limit of FPS graph
+  maxMb: 100 // Sets upper limit of MB graph
+  drawInterval: 1000,
+  containerStyle: '', // Inline styles for container
+  canvasStyle: '', // Inline styles for the canvas
+  showFps: true,
+  showMs: true,
+  showMb: true,
+  frameColor: '#000022',
+  graphColor: '#112244',
+  fpsColor: '#ffffff',
+  fpsTextColor: '#ffffff',
+  msColor: '#00ffff',
+  msTextColor: '#00ffff',
+  mbColor: '#ff00ff',
+  mbTextColor: '#ff00ff'
+}); 
 document.body.appendChild( stats.dom );
 
 function animate() {
-
     stats.begin();
-
     // monitored code goes here
-
     stats.end();
 
     requestAnimationFrame( animate );
