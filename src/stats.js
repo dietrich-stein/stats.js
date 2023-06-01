@@ -179,11 +179,11 @@ class Stats {
       }
 
       if (this.config.showMs) {
-        this.lastMsY = this.#drawLineGraph(this.config.msColor, this.MAX_MS, this.lastMs, this.lastMsY);
+        this.lastMsY = this.drawLineGraph(this.config.msColor, this.MAX_MS, this.lastMs, this.lastMsY);
       }
 
       if (this.config.showMb) {
-        this.lastMbY = this.#drawLineGraph(this.config.mbColor, this.config.maxMb, this.lastMb, this.lastMbY);
+        this.lastMbY = this.drawLineGraph(this.config.mbColor, this.config.maxMb, this.lastMb, this.lastMbY);
       }      
 
       this.prevTime = time;
@@ -197,7 +197,7 @@ class Stats {
     this.beginTime = this.end();
   }
 
-  #drawLineGraph(color, maxValue, newValue, lastY) {
+  drawLineGraph(color, maxValue, newValue, lastY) {
     this.context.fillStyle = color;
     let newY = Math.round((1 - newValue / maxValue) * this.GRAPH_HEIGHT);
     if (this.GRAPH_HEIGHT - this.PR < newY) {

@@ -17,7 +17,7 @@
     "src"
   ],
   "scripts": {
-    "build": "rollup -c && uglifyjs build/stats.js -o build/stats.min.js -cm -b beautify=false,preamble='\"// @dietrich-stein/stats.js - http://github.com/dietrich-stein/stats.js\"'"
+    "build": "rollup -c"
   },
   "keywords": [
     "performance",
@@ -34,8 +34,10 @@
     "@babel/cli": "^7.21.5",
     "@babel/core": "^7.22.1",
     "@babel/plugin-external-helpers": "^7.18.6",
+    "@babel/plugin-transform-class-properties": "^7.22.3",
     "@babel/preset-env": "^7.22.4",
     "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-terser": "^0.4.3",
     "rollup": "^3.23.0",
     "uglify-js": "^3.3.9"
   },
