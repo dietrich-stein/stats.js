@@ -11,6 +11,8 @@ The parent of this repo is a customized fork of [mrdoob/stats.js](https://github
 
 ## What changed in this fork?
 
+![customized2.png](https://raw.githubusercontent.com/dietrich-stein/stats.js/master/files/customized2.png)
+
 - Updated Babel and rollup
 - Converted module to ESM syntax
 - Using an object for configuration
@@ -27,7 +29,7 @@ The parent of this repo is a customized fork of [mrdoob/stats.js](https://github
  - Added text display area.
  - Reduced drawing load. (but, reduced drawing frequency. Optional changeable.) 
 
-![customized.png](https://raw.githubusercontent.com/drecom/stats.js/master/files/customized.png)
+![customized.png](https://raw.githubusercontent.com/dietrich-stein/stats.js/master/files/customized.png)
 
 * **FPS** Frames rendered in the last second. The higher the number the better.
 * **MS** Maximum number of milliseconds between graph drawing. The lower the number the better.
