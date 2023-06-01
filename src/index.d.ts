@@ -8,14 +8,14 @@ declare class Stats {
     showFps? : boolean,
     showMs? : boolean,
     showMb? : boolean
-    frameColor? : '#000022',
-    graphColor? : '#112244',
-    fpsColor? : '#ffffff',
-    fpsTextColor? :  '#ffffff',
-    msColor? : '#00ffff',
-    msTextColor? : '#00ffff',
-    mbColor? : '#ff00ff',
-    mbTextColor? : '#ff00ff',
+    frameColor? : string,
+    graphColor? : string,
+    fpsColor? : string,
+    fpsTextColor? :  string,
+    msColor? : string,
+    msTextColor? : string,
+    mbColor? : string,
+    mbTextColor? : string,
   });
 	
   dom: HTMLDivElement;

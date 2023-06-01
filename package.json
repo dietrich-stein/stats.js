@@ -38,5 +38,8 @@
     "@rollup/plugin-babel": "^6.0.3",
     "rollup": "^3.23.0",
     "uglify-js": "^3.3.9"
+  },
+  "dependencies": {
+    "core-js": "^3.30.2"
   }
 }

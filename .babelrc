@@ -2,7 +2,11 @@
   "presets": [
     [
       "@babel/preset-env", 
-      {}
+      {
+        "useBuiltIns": "entry",
+        "modules": false,
+        "corejs": "3.30.2"        
+      }
     ]
   ],
   "plugins": []

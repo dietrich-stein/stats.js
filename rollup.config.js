@@ -4,11 +4,13 @@ const config = {
   input: 'src/Stats.js',
   output: {
     file: 'build/stats.js',
-    format: 'umd',
+    format: 'iife',
     name: 'Stats',
   },
   plugins: [
-    babel({ babelHelpers: 'bundled' })
+    babel({ 
+      babelHelpers: 'bundled'
+    })
   ]
 };
 

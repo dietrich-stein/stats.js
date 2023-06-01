@@ -4,236 +4,214 @@
  * @author Dietrich Stein / https://github.com/dietrich-stein/stats.js
  */
 
-var Stats = function (config) {
-	const defaultConfig = {
-	  maxFps: 60,
-	  maxMb: 100,
-	  drawInterval: 1000,
-	  containerStyle: 'position:fixed;top:0;left:0;opacity:0.9;z-index:10000',
-	  canvasStyle: 'width:160px;height:96px',
-	  showFps: true,
-	  showMs: true,
-	  showMb: true,
-	  frameColor: '#000022',
-	  graphColor: '#112244',
-	  fpsColor: '#ffffff',
-	  fpsTextColor: '#ffffff',
-	  msColor: '#00ffff',
-	  msTextColor: '#00ffff',
-	  mbColor: '#ff00ff',
-	  mbTextColor: '#ff00ff',
-	};
-	config = {
-	  ...defaultConfig,
-	  ...config,
-	};
+class Stats {
+  constructor(config) {
+    const defaultConfig = {
+      maxFps: 60,
+      maxMb: 100,
+      drawInterval: 1000,
+      containerStyle: 'position:fixed;top:0;left:0;opacity:0.9;z-index:10000',
+      canvasStyle: 'width:160px;height:96px',
+      showFps: true,
+      showMs: true,
+      showMb: true,
+      frameColor: '#000022',
+      graphColor: '#112244',
+      fpsColor: '#ffffff',
+      fpsTextColor: '#ffffff',
+      msColor: '#00ffff',
+      msTextColor: '#00ffff',
+      mbColor: '#ff00ff',
+      mbTextColor: '#ff00ff',
+    };
+    this.config = {
+      ...defaultConfig,
+      ...config,
+    };
+
+    this.MAX_MS = 1000 / this.config.maxFps;
+    this.PR = Math.round(window.devicePixelRatio || 1) * 2;
+    this.WIDTH = 80 * this.PR,
+    this.HEIGHT = 48 * this.PR,
+    this.TEXT_X = 3 * this.PR,
+    this.TEXT_Y = 2 * this.PR,
+    this.GRAPH_X = 3 * this.PR,
+    this.GRAPH_Y = 25 * this.PR,
+    this.GRAPH_WIDTH = 74 * this.PR,
+    this.GRAPH_HEIGHT = 20 * this.PR,
+    this.TEXT_Y_2 = this.GRAPH_Y / 2;
+    this.lastFps = 0;
+    this.lastMs = 0;
+    this.lastMsY = this.GRAPH_HEIGHT;
+    this.lastMb = 0;
+    this.lastMbY = this.GRAPH_HEIGHT;      
+    
+    // Determine whether JavaScript heap can be obtained.
+    this.isReadMemTest = false;
+    this.isReadMemTestMem = 0;
+    this.isReadMemTestTime = (performance || Date).now() + 5000;
+    this.canReadMem = false;
+    if (
+      self.performance &&
+      self.performance.memory &&
+      self.performance.memory.usedJSHeapSize
+    ) {
+      this.isReadMemTest = true;
+      this.isReadMemTestMem = self.performance.memory.usedJSHeapSize;
+    }
+    
+    // Container, canvas, and context
+    this.dom = document.createElement('div');
+    this.dom.style.cssText = config.containerStyle;
+
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = this.WIDTH;
+    this.canvas.height = this.HEIGHT;
+    this.canvas.style.cssText = this.config.canvasStyle;
+
+    this.dom.appendChild(this.canvas);
+
+    this.context = this.canvas.getContext('2d');
+    this.context.font = 'bold ' + 9 * this.PR + 'px Helvetica,Arial,sans-serif';
+    this.context.textBaseline = 'top';
+    this.context.fillStyle = this.config.frameColor;
+    this.context.fillRect(0, 0, this.WIDTH, this.HEIGHT);
+    this.context.fillStyle = this.config.graphColor;
+    this.context.fillRect(this.GRAPH_X, this.GRAPH_Y, this.GRAPH_WIDTH, this.GRAPH_HEIGHT);      
+
+    // Initialize metrics
+    this.beginTime = (performance || Date).now();
+    this.prevTime = this.beginTime;
+    this.frames = 0;
+    this.maxTime = 0;      
+  }
+
+  getFps() {
+    return this.lastFps;
+  }
+
+  getMs() {
+    return this.lastMs;
+  }
+
+  getMb() {
+    return this.lastMb;
+  }
+
+  begin() {
+    this.beginTime = (performance || Date).now();
+  }
+
+  end() {
+    this.frames++;
+    let time = (performance || Date).now();
+    let nowTime = time - this.beginTime;
+    if (this.maxTime < nowTime) {
+      this.maxTime = nowTime;
+    }
+    if (time >= this.prevTime + this.config.drawInterval) {
+      let mb = 0;
+      if (this.config.showMb) {
+        if (this.isReadMemTest) {
+          // Enable if there are heap fluctuations
+          if (this.isReadMemTestMem !== performance.memory.usedJSHeapSize) {
+            this.isReadMemTest = false;
+            this.canReadMem = true;
+          } else {
+            if (this.isReadMemTestTime < time) {
+              this.isReadMemTest = false;
+            }
+          }
+        }
+        if (this.canReadMem) {
+          mb = window.performance.memory.usedJSHeapSize / 1048576;
+        }
+      }
+
+      this.context.fillStyle = this.config.frameColor;
+      this.context.fillRect(0, 0, this.WIDTH, this.GRAPH_Y);
   
-	// Determine whether JavaScript heap can be obtained.
-	var isReadMemTest = false;
-	var isReadMemTestMem = 0;
-	var isReadMemTestTime = (performance || Date).now() + 5000;
-	var canReadMem = false;
-	if (
-	  self.performance &&
-	  self.performance.memory &&
-	  self.performance.memory.usedJSHeapSize
-	) {
-	  isReadMemTest = true;
-	  isReadMemTestMem = self.performance.memory.usedJSHeapSize;
-	}
+      let lineText = '';
+      if (this.config.showFps) {
+        this.lastFps = (this.frames * 1000) / (time - this.prevTime);        
+        lineText = Math.round(this.lastFps) + ' FPS';
+        this.context.fillStyle = this.config.fpsTextColor;        
+        this.context.fillText(lineText, this.TEXT_X, this.TEXT_Y);
+      }
+      if (this.config.showMs) {
+        this.lastMs = this.maxTime;
+        lineText = Math.round(this.lastMs) + ' MS';
+        this.context.fillStyle = this.config.msTextColor;        
+        this.context.fillText(lineText, (this.GRAPH_WIDTH / 2) + (3 * this.PR), this.TEXT_Y);        
+      }
+      if (this.config.showMb) {
+        this.lastMb = mb;
+        lineText = Math.round(this.lastMb) + ' MB';
+        this.context.fillStyle = this.config.mbTextColor;
+        this.context.fillText(lineText, this.TEXT_X, this.TEXT_Y_2);
+      }
   
-	var panel = new StatsPanel(config);
+      this.context.drawImage(
+        this.canvas,
+        this.GRAPH_X + this.PR,
+        this.GRAPH_Y,
+        this.GRAPH_WIDTH - this.PR,
+        this.GRAPH_HEIGHT,
+        this.GRAPH_X,
+        this.GRAPH_Y,
+        this.GRAPH_WIDTH - this.PR,
+        this.GRAPH_HEIGHT,
+      );
   
-	var beginTime = (performance || Date).now(),
-	  prevTime = beginTime,
-	  frames = 0,
-	  mem = 0,
-	  maxTime = 0;
- 
-	return {
-	  dom: panel.dom,
-	  getFps: function () {
-		return panel.getFps();
-	  },
-	  getMs: function () {
-		return panel.getMs();
-	  },
-	  getMb: function () {
-		return mem;
-	  },
-	  begin: function () {
-		beginTime = (performance || Date).now();
-	  },
-	  end: function () {
-		frames++;
-		var time = (performance || Date).now();
-		var nowTime = time - beginTime;
-		if (maxTime < nowTime) {
-		  maxTime = nowTime;
-		}
-		if (time >= prevTime + config.drawInterval) {
-		  var mb = 0;
-		  if (config.showMb) {
-			if (isReadMemTest) {
-			  // Enable if there are heap fluctuations
-			  if (isReadMemTestMem !== performance.memory.usedJSHeapSize) {
-				isReadMemTest = false;
-				canReadMem = true;
-			  } else {
-				if (isReadMemTestTime < time) {
-				  isReadMemTest = false;
-				}
-			  }
-			}
-			if (canReadMem) {
-			  mb = window.performance.memory.usedJSHeapSize / 1048576;
-			}
-		  }
+      this.context.fillStyle = this.config.graphColor;
+      this.context.fillRect(this.GRAPH_X + this.GRAPH_WIDTH - this.PR, this.GRAPH_Y, this.PR, this.GRAPH_HEIGHT);
   
-		  panel.update((frames * 1000) / (time - prevTime), maxTime, mb, config);
-  
-		  prevTime = time;
-		  frames = 0;
-		  maxTime = 0;
-		}
-		return time;
-	  },
-  
-	  update: function () {
-		beginTime = this.end();
-	  },
-	};
-  };
-  
-  // A class that displays passed data in a graph.
-  var StatsPanel = function (config) {
-	var MAX_FPS = config.maxFps,
-	  MAX_MS = 1000 / MAX_FPS;
-	var PR = Math.round(window.devicePixelRatio || 1) * 2;
-	var WIDTH = 80 * PR,
-	  HEIGHT = 48 * PR,
-	  TEXT_X = 3 * PR,
-	  TEXT_Y = 2 * PR,
-	  GRAPH_X = 3 * PR,
-	  GRAPH_Y = 25 * PR,
-	  GRAPH_WIDTH = 74 * PR,
-	  GRAPH_HEIGHT = 20 * PR,
-	  TEXT_Y_2 = GRAPH_Y / 2;
-	var lastFps = 0;
-	var lastMs = 0;
-	var lastMsY = GRAPH_HEIGHT;
-	var lastMb = 0;
-	var lastMbY = GRAPH_HEIGHT;
- 
-	// Container, canvas, and context
-	var container = document.createElement('div');
-	container.style.cssText = config.containerStyle;
-	var canvas = document.createElement('canvas');
-	canvas.width = WIDTH;
-	canvas.height = HEIGHT;
-	container.appendChild(canvas);
-	canvas.style.cssText = config.canvasStyle;
-	var context = canvas.getContext('2d');
-	context.font = 'bold ' + 9 * PR + 'px Helvetica,Arial,sans-serif';
-	context.textBaseline = 'top';
-	context.fillStyle = config.frameColor;
-	context.fillRect(0, 0, WIDTH, HEIGHT);
-	context.fillStyle = config.graphColor;
-	context.fillRect(GRAPH_X, GRAPH_Y, GRAPH_WIDTH, GRAPH_HEIGHT);
-  
-	var drawLineGraph = function (color, maxValue, newValue, lastY) {
-	  context.fillStyle = color;
-	  var newY = Math.round((1 - newValue / maxValue) * GRAPH_HEIGHT);
-	  if (GRAPH_HEIGHT - PR < newY) {
-		newY = GRAPH_HEIGHT - PR;
-	  } else if (newY < 0) {
-		newY = 0;
-	  }
-	  var head = Math.min(newY, lastY);
-	  var bottom = Math.max(newY, lastY);
-	  var height = bottom - head;
-	  if (height < PR) height = PR;
-	  context.fillRect(GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y + head, PR, height);
-	  return newY;
-	};
-  
-	return {
-	  dom: container,
-	  getFps: function () {
-		return lastFps;
-	  },
-	  getMs: function () {
-		return lastMs;
-	  },
-	  getMb: function () {
-		return lastMb;
-	  },
-	  update: function (
-		fps,
-		ms,
-		mb,
-		config
-	  ) {
-		context.fillStyle = config.frameColor;
-		context.fillRect(0, 0, WIDTH, GRAPH_Y);
-  
-		var lineText = '';
-		if (config.showFps) {
-		  lastFps = fps;        
-		  lineText = Math.round(lastFps) + ' FPS';
-		  context.fillStyle = config.fpsTextColor;        
-		  context.fillText(lineText, TEXT_X, TEXT_Y);
-		}
-		if (config.showMs) {
-		  lastMs = ms;
-		  lineText = Math.round(lastMs) + ' MS';
-		  context.fillStyle = config.msTextColor;        
-		  context.fillText(lineText, (GRAPH_WIDTH / 2) + (3 * PR), TEXT_Y);        
-		}
-		if (config.showMb) {
-		  lastMb = mb;
-		  lineText = Math.round(lastMb) + ' MB';
-		  context.fillStyle = config.mbTextColor;
-		  context.fillText(lineText, TEXT_X, TEXT_Y_2);
-		}
-  
-		context.drawImage(
-		  canvas,
-		  GRAPH_X + PR,
-		  GRAPH_Y,
-		  GRAPH_WIDTH - PR,
-		  GRAPH_HEIGHT,
-		  GRAPH_X,
-		  GRAPH_Y,
-		  GRAPH_WIDTH - PR,
-		  GRAPH_HEIGHT,
-		);
-  
-		context.fillStyle = config.graphColor;
-		context.fillRect(GRAPH_X + GRAPH_WIDTH - PR, GRAPH_Y, PR, GRAPH_HEIGHT);
-  
-		if (config.showFps) {
-		  context.fillStyle = config.fpsColor;
-		  var nowFpsY = Math.round((1 - lastFps / MAX_FPS) * GRAPH_HEIGHT);
-		  if (nowFpsY < 0) nowFpsY = 0;
-		  context.fillRect(
-			GRAPH_X + GRAPH_WIDTH - PR,
-			GRAPH_Y + nowFpsY,
-			PR,
-			PR,
-		  );
-		}
-  
-		if (config.showMs) {
-		  lastMsY = drawLineGraph(config.msColor, MAX_MS, lastMs, lastMsY);
-		}
-  
-		if (config.showMb) {
-		  lastMbY = drawLineGraph(config.mbColor, config.maxMb, lastMb, lastMbY);
-		}      
-	  }
-	};
-  };
-  
-  export { Stats as default };
-  
+      if (this.config.showFps) {
+        this.context.fillStyle = this.config.fpsColor;
+        let nowFpsY = Math.round((1 - this.lastFps / this.config.maxFps) * this.GRAPH_HEIGHT);
+        if (nowFpsY < 0) nowFpsY = 0;
+        this.context.fillRect(
+          this.GRAPH_X + this.GRAPH_WIDTH - this.PR,
+          this.GRAPH_Y + nowFpsY,
+          this.PR,
+          this.PR,
+        );
+      }
+
+      if (this.config.showMs) {
+        this.lastMsY = this.#drawLineGraph(this.config.msColor, this.MAX_MS, this.lastMs, this.lastMsY);
+      }
+
+      if (this.config.showMb) {
+        this.lastMbY = this.#drawLineGraph(this.config.mbColor, this.config.maxMb, this.lastMb, this.lastMbY);
+      }      
+
+      this.prevTime = time;
+      this.frames = 0;
+      this.maxTime = 0;
+    }
+    return time;
+  }
+
+  update() {
+    this.beginTime = this.end();
+  }
+
+  #drawLineGraph(color, maxValue, newValue, lastY) {
+    this.context.fillStyle = color;
+    let newY = Math.round((1 - newValue / maxValue) * this.GRAPH_HEIGHT);
+    if (this.GRAPH_HEIGHT - this.PR < newY) {
+      newY = this.GRAPH_HEIGHT - this.PR;
+    } else if (newY < 0) {
+      newY = 0;
+    }
+    let head = Math.min(newY, lastY);
+    let bottom = Math.max(newY, lastY);
+    let height = bottom - head;
+    if (height < this.PR) height = this.PR;
+    this.context.fillRect(this.GRAPH_X + this.GRAPH_WIDTH - this.PR, this.GRAPH_Y + head, this.PR, height);
+    return newY;
+  }
+}
+
+export default Stats;

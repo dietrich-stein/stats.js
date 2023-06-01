@@ -12,6 +12,7 @@ The parent of this repo is a customized fork of [mrdoob/stats.js](https://github
 ## What changed in this fork?
 
 - Updated Babel and rollup
+- Converted module to ESM syntax
 - Using an object for configuration
 - Added color options
 - Changed to line style for FPS graph
